@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import BrandLogo from '@/components/BrandLogo';
 import { signup } from '../../services/api/authApi';
 import styles from './SignupPage.module.scss';
 
@@ -69,82 +70,88 @@ const SignupPage = () => {
       <h1 className={styles.srOnly}>회원가입</h1>
 
       <Link to="/" aria-label="홈으로 이동" className={styles.homeLink}>
-        <img src="/logo.png" alt="로고" className={styles.logo} />
+        <BrandLogo compact />
       </Link>
 
-      <form onSubmit={handleSubmit} aria-label="회원가입" className={styles.form}>
-        <div className={styles.inputGroup}>
-          <label htmlFor="email" className={styles.label}>
-            이메일
-          </label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="이메일"
-            className={styles.input}
-          />
-        </div>
+      <section className={styles.card}>
+        <p className={styles.eyebrow}>Create Account</p>
+        <h2 className={styles.title}>회원가입</h2>
+        <p className={styles.copy}>응원 댓글과 개인화 기능을 사용하려면 계정을 생성하세요.</p>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="password" className={styles.label}>
-            비밀번호
-          </label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            placeholder="비밀번호"
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="confirmPassword" className={styles.label}>
-            비밀번호 확인
-          </label>
-          <input
-            id="confirmPassword"
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            placeholder="비밀번호 확인"
-            className={styles.input}
-          />
-        </div>
-
-        {message && (
-          <div role="alert" className={styles.message}>
-            {message}
+        <form onSubmit={handleSubmit} aria-label="회원가입" className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label htmlFor="email" className={styles.label}>
+              이메일
+            </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="이메일"
+              className={styles.input}
+            />
           </div>
-        )}
 
-        <button
-          type="submit"
-          disabled={!isFormFilled || pending}
-          className={styles.signupButton}
-        >
-          {pending ? '가입 중...' : '회원가입'}
-        </button>
-      </form>
+          <div className={styles.inputGroup}>
+            <label htmlFor="password" className={styles.label}>
+              비밀번호
+            </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="비밀번호"
+              className={styles.input}
+            />
+          </div>
 
-      <div className={styles.divider} />
+          <div className={styles.inputGroup}>
+            <label htmlFor="confirmPassword" className={styles.label}>
+              비밀번호 확인
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              placeholder="비밀번호 확인"
+              className={styles.input}
+            />
+          </div>
 
-      <p className={styles.loginText}>
-        이미 계정이 있나요?
-        <Link
-          to="/login"
-          aria-label="로그인 페이지로 이동"
-          className={styles.loginLink}
-        >
-          로그인하기
-        </Link>
-      </p>
+          {message && (
+            <div role="alert" className={styles.message}>
+              {message}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={!isFormFilled || pending}
+            className={styles.signupButton}
+          >
+            {pending ? '가입 중...' : '회원가입'}
+          </button>
+        </form>
+
+        <div className={styles.divider} />
+
+        <p className={styles.loginText}>
+          이미 계정이 있나요?
+          <Link
+            to="/login"
+            aria-label="로그인 페이지로 이동"
+            className={styles.loginLink}
+          >
+            로그인하기
+          </Link>
+        </p>
+      </section>
     </main>
   );
 };
