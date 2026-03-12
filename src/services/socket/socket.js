@@ -1,5 +1,8 @@
 import io from "socket.io-client";
+import { appConfig } from "@/config/runtimeConfig";
 
-const socket = io(import.meta.env.VITE_WS_URL || "/ws");
+const socket = io(appConfig.wsUrl || undefined, {
+  path: appConfig.wsPath,
+});
 
 export default socket;

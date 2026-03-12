@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getGames } from "@/services/api/gameApi";
 import { demoScheduleGame } from "@/pages/LivePage/demoLiveData";
+import { appConfig } from "@/config/runtimeConfig";
 import "./SchedulePage.scss";
 
 const dateLabelFormatter = new Intl.DateTimeFormat("ko-KR", { weekday: "short" });
 const monthLabelFormatter = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit" });
-const DEFAULT_GAME_DATE = import.meta.env.VITE_DEFAULT_GAME_DATE;
-const DEMO_GAME_DATE = import.meta.env.VITE_DEMO_GAME_DATE;
+const DEFAULT_GAME_DATE = appConfig.defaultGameDate;
+const DEMO_GAME_DATE = appConfig.demoGameDate;
 
 const formatDateKey = (date) => {
   const year = date.getFullYear();
