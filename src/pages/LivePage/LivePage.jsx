@@ -8,6 +8,7 @@ import {
   getGameRelay,
   postGameChat,
 } from "@/services/api/gameApi";
+import { appConfig } from "@/config/runtimeConfig";
 import { DEMO_GAME_ID, demoGame, demoSnapshots } from "./demoLiveData";
 import "./LivePage.scss";
 
@@ -18,7 +19,7 @@ const TAB_ITEMS = [
 ];
 
 const POLLING_INTERVAL = 5000;
-const DEMO_CHAT_GAME_ID = import.meta.env.VITE_DEMO_CHAT_GAME_ID;
+const DEMO_CHAT_GAME_ID = appConfig.demoChatGameId;
 
 const BaseDiamond = ({ bases }) => {
   const baseClassName = (isActive) =>

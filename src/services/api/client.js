@@ -1,8 +1,9 @@
 import axios from "axios";
 import { getAccessToken } from "@/contexts/authStorage";
+import { appConfig } from "@/config/runtimeConfig";
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
+  baseURL: appConfig.apiBaseUrl,
 });
 
 client.interceptors.request.use((config) => {
