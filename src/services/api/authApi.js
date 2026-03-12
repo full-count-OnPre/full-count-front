@@ -1,7 +1,7 @@
 import client from './client';
 
 export const login = async ({ email, password }) => {
-  const response = await client.post('/login', {
+  const response = await client.post('/auth/login', {
     email,
     password,
   });
@@ -10,7 +10,7 @@ export const login = async ({ email, password }) => {
 };
 
 export const signup = async ({ email, password }) => {
-  const response = await client.post('/signup', {
+  const response = await client.post('/auth/register', {
     email,
     password,
   });

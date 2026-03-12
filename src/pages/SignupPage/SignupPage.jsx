@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '@/components/BrandLogo';
+import useAuth from '@/contexts/useAuth';
+import { createAuthUser, getUserIdFromAccessToken } from '@/contexts/authStorage';
 import { signup } from '../../services/api/authApi';
 import styles from './SignupPage.module.scss';
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -50,13 +53,20 @@ const SignupPage = () => {
     try {
       setPending(true);
 
-      await signup({
+      const data = await signup({
         email,
         password,
       });
 
-      alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
-      navigate('/login');
+      login({
+        user: createAuthUser({
+          email,
+          id: getUserIdFromAccessToken(data.accessToken),
+        }),
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
+      navigate('/');
     } catch (error) {
       console.error('회원가입 실패:', error);
       setMessage('회원가입에 실패했습니다. 입력값 또는 서버 상태를 확인해 주세요.');
