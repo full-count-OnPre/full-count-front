@@ -1,14 +1,13 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import BrandLogo from "@/components/BrandLogo";
 import useAuth from "@/contexts/useAuth";
 
 const MainLayout = () => {
-  const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, logout, user } = useAuth();
 
   const handleLogout = () => {
     logout();
-    navigate("/");
   };
 
   return (
@@ -27,7 +26,7 @@ const MainLayout = () => {
               </button>
             </div>
           ) : (
-            <Link to="/login" className="main-layout__auth-button">
+            <Link to="/login" state={{ from: location }} className="main-layout__auth-button">
               로그인
             </Link>
           )}

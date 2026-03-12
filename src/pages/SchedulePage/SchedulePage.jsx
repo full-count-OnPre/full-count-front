@@ -1,154 +1,13 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getGames } from "@/services/api/gameApi";
+import { demoScheduleGame } from "@/pages/LivePage/demoLiveData";
 import "./SchedulePage.scss";
-
-const scheduleByDate = {
-  "2025-03-10": [
-    {
-      id: 101,
-      time: "18:30",
-      stadium: "T-Mobile Park",
-      status: "경기 종료",
-      homeTeam: { name: "시애틀", code: "SEA", score: 112, accent: "is-green" },
-      awayTeam: { name: "텍사스", code: "TEX", score: 106, accent: "is-blue" },
-    },
-    {
-      id: 102,
-      time: "19:00",
-      stadium: "Kauffman Stadium",
-      status: "경기 종료",
-      homeTeam: { name: "캔자스시티", code: "KC", score: 101, accent: "is-royal" },
-      awayTeam: { name: "미네소타", code: "MIN", score: 97, accent: "is-navy" },
-    },
-  ],
-  "2025-03-11": [
-    {
-      id: 103,
-      time: "18:00",
-      stadium: "Fenway Park",
-      status: "경기 종료",
-      homeTeam: { name: "보스턴", code: "BOS", score: 119, accent: "is-red" },
-      awayTeam: { name: "뉴욕 양키스", code: "NYY", score: 114, accent: "is-slate" },
-    },
-    {
-      id: 104,
-      time: "20:30",
-      stadium: "Dodger Stadium",
-      status: "경기 종료",
-      homeTeam: { name: "LA 다저스", code: "LAD", score: 108, accent: "is-blue" },
-      awayTeam: { name: "샌디에이고", code: "SD", score: 102, accent: "is-gold" },
-    },
-  ],
-  "2025-03-12": [
-    {
-      id: 105,
-      time: "18:30",
-      stadium: "Busch Stadium",
-      status: "경기 종료",
-      homeTeam: { name: "세인트루이스", code: "STL", score: 117, accent: "is-red" },
-      awayTeam: { name: "밀워키", code: "MIL", score: 109, accent: "is-gold" },
-    },
-    {
-      id: 106,
-      time: "20:00",
-      stadium: "Wrigley Field",
-      status: "경기 종료",
-      homeTeam: { name: "시카고 컵스", code: "CHC", score: 115, accent: "is-blue" },
-      awayTeam: { name: "신시내티", code: "CIN", score: 111, accent: "is-red" },
-    },
-  ],
-  "2025-03-13": [
-    {
-      id: 1,
-      time: "18:30",
-      stadium: "Jamsil Baseball Stadium",
-      status: "경기 종료",
-      homeTeam: { name: "화스스", code: "HWS", score: 123, accent: "is-red" },
-      awayTeam: { name: "충헤츠", code: "CHZ", score: 110, accent: "is-blue" },
-    },
-    {
-      id: 2,
-      time: "19:00",
-      stadium: "Gocheok Sky Dome",
-      status: "경기 종료",
-      homeTeam: { name: "셰노스", code: "SHN", score: 112, accent: "is-green" },
-      awayTeam: { name: "레더", code: "RED", score: 118, accent: "is-blue" },
-    },
-    {
-      id: 3,
-      time: "19:30",
-      stadium: "Sajik Baseball Stadium",
-      status: "경기 종료",
-      homeTeam: { name: "맥스스", code: "MXS", score: 118, accent: "is-red" },
-      awayTeam: { name: "세트비너스", code: "SVN", score: 105, accent: "is-royal" },
-    },
-    {
-      id: 4,
-      time: "20:00",
-      stadium: "Incheon SSG Landers Field",
-      status: "경기 종료",
-      homeTeam: { name: "히트", code: "HIT", score: 104, accent: "is-red" },
-      awayTeam: { name: "큐레즈스", code: "QRS", score: 119, accent: "is-violet" },
-    },
-  ],
-  "2025-03-14": [
-    {
-      id: 107,
-      time: "18:30",
-      stadium: "Truist Park",
-      status: "경기 예정",
-      homeTeam: { name: "애틀랜타", code: "ATL", score: "-", accent: "is-red" },
-      awayTeam: { name: "필라델피아", code: "PHI", score: "-", accent: "is-maroon" },
-    },
-    {
-      id: 108,
-      time: "21:00",
-      stadium: "LoanDepot Park",
-      status: "경기 예정",
-      homeTeam: { name: "마이애미", code: "MIA", score: "-", accent: "is-cyan" },
-      awayTeam: { name: "워싱턴", code: "WSH", score: "-", accent: "is-red" },
-    },
-  ],
-  "2025-03-15": [
-    {
-      id: 109,
-      time: "18:00",
-      stadium: "Oracle Park",
-      status: "경기 예정",
-      homeTeam: { name: "샌프란시스코", code: "SF", score: "-", accent: "is-gold" },
-      awayTeam: { name: "애리조나", code: "ARI", score: "-", accent: "is-maroon" },
-    },
-    {
-      id: 110,
-      time: "20:00",
-      stadium: "Citi Field",
-      status: "경기 예정",
-      homeTeam: { name: "뉴욕 메츠", code: "NYM", score: "-", accent: "is-blue" },
-      awayTeam: { name: "토론토", code: "TOR", score: "-", accent: "is-cyan" },
-    },
-  ],
-  "2025-03-16": [
-    {
-      id: 111,
-      time: "17:30",
-      stadium: "Camden Yards",
-      status: "경기 예정",
-      homeTeam: { name: "볼티모어", code: "BAL", score: "-", accent: "is-orange" },
-      awayTeam: { name: "탬파베이", code: "TB", score: "-", accent: "is-cyan" },
-    },
-    {
-      id: 112,
-      time: "19:30",
-      stadium: "Progressive Field",
-      status: "경기 예정",
-      homeTeam: { name: "클리블랜드", code: "CLE", score: "-", accent: "is-red" },
-      awayTeam: { name: "디트로이트", code: "DET", score: "-", accent: "is-navy" },
-    },
-  ],
-};
 
 const dateLabelFormatter = new Intl.DateTimeFormat("ko-KR", { weekday: "short" });
 const monthLabelFormatter = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit" });
+const DEFAULT_GAME_DATE = import.meta.env.VITE_DEFAULT_GAME_DATE;
+const DEMO_GAME_DATE = import.meta.env.VITE_DEMO_GAME_DATE;
 
 const formatDateKey = (date) => {
   const year = date.getFullYear();
@@ -168,15 +27,126 @@ const createVisibleDates = (selectedDate) => {
   });
 };
 
+const getStatusLabel = (status) => {
+  if (status === 1) {
+    return "진행 중";
+  }
+
+  if (status === 2) {
+    return "경기 종료";
+  }
+
+  return "경기 예정";
+};
+
+const getAccentClass = (code) => {
+  const normalized = String(code || "").toLowerCase();
+  const accents = {
+    nyy: "is-slate",
+    lad: "is-blue",
+    bos: "is-red",
+    chc: "is-blue",
+    stl: "is-red",
+    sea: "is-green",
+  };
+
+  return accents[normalized] || "is-blue";
+};
+
+const formatGameTime = (value) => {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+};
+
+const mapGame = (game) => ({
+  id: game.id,
+  rawStatus: game.status,
+  time: formatGameTime(game.startTime),
+  stadium: game.venue,
+  status: getStatusLabel(game.status),
+  homeTeam: {
+    name: game.homeTeam?.name || "-",
+    code: game.homeTeam?.code || "HOME",
+    score: game.status === 0 ? "-" : game.homeScore,
+    accent: getAccentClass(game.homeTeam?.code),
+  },
+  awayTeam: {
+    name: game.awayTeam?.name || "-",
+    code: game.awayTeam?.code || "AWAY",
+    score: game.status === 0 ? "-" : game.awayScore,
+    accent: getAccentClass(game.awayTeam?.code),
+  },
+});
+
+const getGameActionLabel = (game) => {
+  if (game.id === demoScheduleGame.id || game.rawStatus === 1) {
+    return "실시간 중계";
+  }
+
+  if (game.rawStatus === 2) {
+    return "경기 기록 확인";
+  }
+
+  return "경기 정보 보기";
+};
+
 const SchedulePage = () => {
-  const availableDateKeys = useMemo(() => Object.keys(scheduleByDate), []);
-  const [selectedDate, setSelectedDate] = useState("2025-03-13");
+  const [selectedDate, setSelectedDate] = useState(
+    DEFAULT_GAME_DATE || formatDateKey(new Date())
+  );
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const calendarInputRef = useRef(null);
 
-  const games = scheduleByDate[selectedDate] ?? [];
   const currentDate = new Date(`${selectedDate}T00:00:00`);
   const visibleDates = useMemo(() => createVisibleDates(selectedDate), [selectedDate]);
   const monthLabel = monthLabelFormatter.format(currentDate).replace(/\.\s/g, ".").replace(/\.$/, "");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadGames = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const response = await getGames({ date: selectedDate });
+        const nextGames = Array.isArray(response.data) ? response.data.map(mapGame) : [];
+
+        if (selectedDate === DEMO_GAME_DATE) {
+          nextGames.unshift(demoScheduleGame);
+        }
+
+        if (!cancelled) {
+          setGames(nextGames);
+        }
+      } catch (loadError) {
+        if (!cancelled) {
+          setError("경기 일정을 불러오지 못했습니다. 백엔드 서버와 DB 상태를 확인해 주세요.");
+          setGames([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadGames();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDate]);
 
   const handleMoveDate = (direction) => {
     const nextDate = new Date(currentDate);
@@ -206,9 +176,9 @@ const SchedulePage = () => {
         <div className="schedule-page__hero-row">
           <div>
             <h1>경기 일정 조회</h1>
-            <p>날짜별로 오늘의 매치업을 확인하고 하이라이트, 선수 기록, 실시간 중계 화면으로 빠르게 이동할 수 있습니다.</p>
+            <p>백엔드에서 조회한 날짜별 경기 목록을 확인하고 실시간 중계 화면으로 이동할 수 있습니다.</p>
           </div>
-          <span className="schedule-page__badge">{games.length} Games</span>
+          <span className="schedule-page__badge">{loading ? "..." : `${games.length} Games`}</span>
         </div>
       </div>
 
@@ -270,7 +240,6 @@ const SchedulePage = () => {
           {visibleDates.map((dateKey) => {
             const date = new Date(`${dateKey}T00:00:00`);
             const isActive = dateKey === selectedDate;
-            const hasGames = availableDateKeys.includes(dateKey);
 
             return (
               <button
@@ -278,7 +247,7 @@ const SchedulePage = () => {
                 type="button"
                 role="tab"
                 aria-selected={isActive}
-                className={`schedule-date${isActive ? " is-active" : ""}${hasGames ? "" : " is-empty"}`}
+                className={`schedule-date${isActive ? " is-active" : ""}`}
                 onClick={() => setSelectedDate(dateKey)}
               >
                 <span className="schedule-date__day">{String(date.getDate()).padStart(2, "0")}</span>
@@ -288,7 +257,21 @@ const SchedulePage = () => {
           })}
         </div>
 
-        {games.length > 0 ? (
+        {error ? (
+          <div className="schedule-board__empty">
+            <strong>API Error</strong>
+            <p>{error}</p>
+          </div>
+        ) : null}
+
+        {!error && loading ? (
+          <div className="schedule-board__empty">
+            <strong>{selectedDate}</strong>
+            <p>경기 일정을 불러오는 중입니다.</p>
+          </div>
+        ) : null}
+
+        {!error && !loading && games.length > 0 ? (
           <div className="schedule-board__grid">
             {games.map((game) => (
               <article key={game.id} className="match-card">
@@ -323,18 +306,27 @@ const SchedulePage = () => {
                     선수 기록
                   </button>
                   <Link to={`/games/${game.id}/live`} className="match-card__button is-primary">
-                    실시간 중계
+                    {getGameActionLabel(game)}
                   </Link>
                 </div>
               </article>
             ))}
           </div>
-        ) : (
+        ) : null}
+
+        {!error && !loading && games.length === 0 ? (
           <div className="schedule-board__empty">
             <strong>{selectedDate}</strong>
-            <p>선택한 날짜에는 등록된 경기 일정이 없습니다. 월 이동 버튼이나 캘린더로 다른 날짜를 선택해 주세요.</p>
+            <p>
+              선택한 날짜에는 등록된 경기 일정이 없습니다.
+              {selectedDate === DEMO_GAME_DATE
+                ? " 시연용 데모 경기를 쓰려면 환경변수와 dev 서버 재시작 상태를 확인해 주세요."
+                : DEFAULT_GAME_DATE
+                  ? ` 시드 데이터 확인용 날짜는 ${DEFAULT_GAME_DATE} 입니다.`
+                  : ""}
+            </p>
           </div>
-        )}
+        ) : null}
       </div>
     </section>
   );

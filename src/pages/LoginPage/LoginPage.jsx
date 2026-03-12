@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import BrandLogo from "@/components/BrandLogo";
+import useAuth from "@/contexts/useAuth";
+import { createAuthUser, getUserIdFromAccessToken } from "@/contexts/authStorage";
 import { login } from "../../services/api/authApi";
 import styles from "./LoginPage.module.scss";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login: saveLogin } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,6 +17,9 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   const isFormFilled = email.trim() && password.trim();
+  const redirectTo = location.state?.from?.pathname
+    ? `${location.state.from.pathname}${location.state.from.search || ""}${location.state.from.hash || ""}`
+    : "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,12 +33,16 @@ const LoginPage = () => {
       setLoading(true);
 
       const data = await login({ email, password });
+      saveLogin({
+        user: createAuthUser({
+          email,
+          id: getUserIdFromAccessToken(data.accessToken),
+        }),
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
 
-      const accessToken = data.accessToken;
-
-      localStorage.setItem("accessToken", accessToken);
-
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       console.error(err);
       setMessage("아이디 또는 비밀번호가 잘못되었습니다.");
